@@ -4,6 +4,7 @@ import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 import Loader from "../Loader/Loader";
 import s from "./ImageGallery.module.css";
 import Modal from "../Modal/Modal";
+import PropTypes from "prop-types";
 
 class ImageGallery extends React.Component {
   state = {
@@ -11,7 +12,8 @@ class ImageGallery extends React.Component {
     status: "idle",
     page: 1,
     showModal: false,
-    image: null,
+    largeImageURL: null,
+    tags: null,
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -49,15 +51,10 @@ class ImageGallery extends React.Component {
           pictures: [...prevState.pictures, ...pictures.hits],
           page: this.state.page + 1,
         }));
+        if (this.state.page !== 1) {
+          this.scrollTo();
+        }
       });
-    this.scrollTo();
-  };
-
-  handleClickImg = (e) => {
-    if (e.currentTarget) {
-      console.log(e.currentTarget);
-      this.setState();
-    }
   };
 
   scrollTo = () => {
@@ -71,6 +68,11 @@ class ImageGallery extends React.Component {
     this.setState((state) => ({
       showModal: !state.showModal,
     }));
+  };
+
+  saveSrcImgModal = ({ largeImageURL, tags }) => {
+    this.setState({ largeImageURL, tags });
+    console.log(this.state.largeImageURL);
   };
 
   render() {
@@ -98,25 +100,33 @@ class ImageGallery extends React.Component {
     if (status === "resolved") {
       return (
         <>
-          <ul onClick={this.handleClickImg} className={s.ImageGallery}>
+          <ul onClick={this.toggleModal} className={s.ImageGallery}>
             {pictures.map((picture) => (
-              <ImageGalleryItem props={picture} />
+              <ImageGalleryItem
+                id={picture.id}
+                webformatURL={picture.webformatURL}
+                tags={picture.tags}
+                largeImageURL={picture.largeImageURL}
+                saveSrcImgModal={this.saveSrcImgModal}
+              />
             ))}
           </ul>
           <Button loadMore={this.nextPage} />
-          <button type="button" onClick={this.toggleModal}>
-            Open modal
-          </button>
           {this.state.showModal && (
-            <Modal onClose={this.toggleModal}>
-              {" "}
-              <img src={pictures[0].webformatURL} alt="" />
-            </Modal>
+            <Modal
+              onClose={this.toggleModal}
+              src={this.state.largeImageURL}
+              alt={this.state.tags}
+            ></Modal>
           )}
         </>
       );
     }
   }
 }
+
+ImageGallery.propTypes = {
+  pictures: PropTypes.array,
+};
 
 export default ImageGallery;

@@ -30,7 +30,7 @@ export default class Modal extends React.Component {
       <div className={s.Overlay} onClick={this.handleBackdropClick}>
         <div className={s.Modal}>
           {this.props.children}
-          <img src="" alt="" />
+          <img src={this.props.src} alt={this.props.alt} />
         </div>
       </div>,
       modalRoot
