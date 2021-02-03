@@ -72,7 +72,6 @@ class ImageGallery extends React.Component {
 
   saveSrcImgModal = ({ largeImageURL, tags }) => {
     this.setState({ largeImageURL, tags });
-    console.log(this.state.largeImageURL);
   };
 
   render() {
